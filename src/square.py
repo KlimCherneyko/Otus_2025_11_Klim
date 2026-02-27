@@ -1,4 +1,4 @@
-from figure import Figure
+from src.figure import Figure
 
 class Square(Figure):
     def __init__(self, side):
@@ -11,7 +11,3 @@ class Square(Figure):
     @property
     def perimeter(self):
         return self.side *4
-
-s = Square(5)
-print(s.area)
-print(s.perimeter)

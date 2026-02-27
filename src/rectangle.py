@@ -1,4 +1,4 @@
-from figure import Figure
+from src.figure import Figure
 class Rectangle(Figure):
     def __init__(self, width, height):
         if width <= 0 or height <= 0:
@@ -11,8 +11,3 @@ class Rectangle(Figure):
     @property
     def perimeter(self):
         return 2 * (self.width + self.height)
-
-s = Rectangle(width=6, height=10)
-
-print(s.area)
-print(s.perimeter)

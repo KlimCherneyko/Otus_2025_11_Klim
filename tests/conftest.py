@@ -1,8 +1,4 @@
-"""Конфигурация pytest"""
-
-
 def pytest_addoption(parser):
-    """Добавление опций командной строки для pytest"""
     parser.addoption(
         "--url",
         action="store",

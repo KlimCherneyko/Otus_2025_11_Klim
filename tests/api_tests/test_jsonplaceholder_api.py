@@ -20,13 +20,13 @@ def test_list_posts(jsonplaceholder_client):
     
     data = response.json()
     assert isinstance(data, list)
-    assert len(data) > 0
+    assert len(data) == 100
     
     post = data[0]
-    assert "userId" in post
-    assert "id" in post
-    assert "title" in post
-    assert "body" in post
+    assert post["userId"] == 1
+    assert post["id"] == 1
+    assert post["title"] == "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+    assert "quia et suscipit" in post["body"]
     
     assert isinstance(post["userId"], int)
     assert isinstance(post["id"], int)
@@ -44,20 +44,20 @@ def test_list_users(jsonplaceholder_client):
     
     data = response.json()
     assert isinstance(data, list)
-    assert len(data) > 0
+    assert len(data) == 10
     
     user = data[0]
-    assert "id" in user
-    assert "name" in user
-    assert "email" in user
-    assert "address" in user
+    assert user["id"] == 1
+    assert user["name"] == "Leanne Graham"
+    assert user["username"] == "Bret"
+    assert user["email"] == "Sincere@april.biz"
     
     assert "@" in user["email"]
     assert "." in user["email"]
     
     assert isinstance(user["address"], dict)
-    assert "city" in user["address"]
-    assert "street" in user["address"]
+    assert user["address"]["city"] == "Gwenborough"
+    assert user["address"]["street"] == "Kulas Light"
 
 
 def test_post_data_structure(jsonplaceholder_client):
@@ -70,14 +70,15 @@ def test_post_data_structure(jsonplaceholder_client):
     for field in required_fields:
         assert field in data
     
+    assert data["userId"] == 1
+    assert data["id"] == 1
+    assert data["title"] == "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+    assert "quia et suscipit" in data["body"]
+    
     assert isinstance(data["userId"], int)
     assert isinstance(data["id"], int)
     assert isinstance(data["title"], str)
     assert isinstance(data["body"], str)
-    
-    assert data["id"] == 1
-    
-    assert 1 <= data["userId"] <= 10
 
 
 @pytest.mark.parametrize("post_id", [1, 5, 10, 50, 100])

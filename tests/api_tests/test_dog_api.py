@@ -27,11 +27,16 @@ def test_list_all_breeds(dog_api_client):
     
     breeds = data["message"]
     assert len(breeds) > 0
+    
     assert "hound" in breeds
     assert "retriever" in breeds
+    assert "bulldog" in breeds
+    assert "affenpinscher" in breeds
     
     assert isinstance(breeds["hound"], list)
     assert len(breeds["hound"]) > 0
+    assert "afghan" in breeds["hound"]
+    assert "basset" in breeds["hound"]
 
 
 def test_random_dog_image(dog_api_client):

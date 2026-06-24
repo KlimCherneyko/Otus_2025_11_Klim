@@ -11,8 +11,8 @@ class MainPage(BasePage):
     SEARCH_INPUT = (By.NAME, "search")
     NAVBAR_MENU = (By.ID, "menu")
     FOOTER = (By.TAG_NAME, "footer")
-    PRODUCT_CARDS = (By.CSS_SELECTOR, ".product-thumb")
-    PRICE_VALUES = (By.CSS_SELECTOR, ".product-thumb .price")
+    PRODUCT_CARDS = (By.CSS_SELECTOR, "#content .product-thumb")
+    PRICE_VALUES = (By.CSS_SELECTOR, "#content .product-thumb .price")
     CURRENCY_BUTTON = (By.CSS_SELECTOR, "#form-currency .dropdown-toggle")
     CART_BUTTON = (By.ID, "cart-total")
     CART_ITEMS = (By.CSS_SELECTOR, "#cart .dropdown-menu .table td.text-left a, #cart .dropdown-menu .table .text-left a")
@@ -21,6 +21,10 @@ class MainPage(BasePage):
 
     def open(self) -> None:
         super().open("")
+        self._wait_for_featured_products()
+
+    def _wait_for_featured_products(self) -> None:
+        self.wait_until(lambda d: len(d.find_elements(*self.PRODUCT_CARDS)) > 0, timeout=20)
 
     def switch_currency(self, currency_title: str) -> None:
         self.click(self.CURRENCY_BUTTON)
@@ -31,7 +35,8 @@ class MainPage(BasePage):
         self.click(currency_locator)
 
     def get_prices_text(self) -> list[str]:
-        return [price.text.strip() for price in self.wait_all_visible(self.PRICE_VALUES) if price.text.strip()]
+        self._wait_for_featured_products()
+        return [price.text.strip() for price in self.driver.find_elements(*self.PRICE_VALUES) if price.text.strip()]
 
     def _cart_total_text(self) -> str:
         try:
@@ -40,7 +45,6 @@ class MainPage(BasePage):
             return ""
 
     def _product_cards(self) -> list:
-        self.wait_until(lambda d: len(d.find_elements(*self.PRODUCT_CARDS)) > 0)
         return self.driver.find_elements(*self.PRODUCT_CARDS)
 
     def add_random_product_to_cart(self) -> str:

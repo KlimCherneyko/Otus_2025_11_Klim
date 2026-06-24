@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs, urlparse
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 
@@ -23,6 +25,10 @@ class AdminLoginPage(BasePage):
 
     def wait_for_dashboard(self) -> None:
         self.wait_until(ec.any_of(ec.visibility_of_element_located(self.LOGOUT_LINK), ec.url_contains("dashboard")))
+
+    def get_user_token(self) -> str:
+        query = urlparse(self.driver.current_url).query
+        return parse_qs(query).get("user_token", [""])[0]
 
     def logout(self) -> None:
         self.click(self.LOGOUT_LINK)

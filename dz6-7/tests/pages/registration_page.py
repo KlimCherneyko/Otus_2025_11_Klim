@@ -14,7 +14,6 @@ class RegistrationPage(BasePage):
     CONFIRM_PASSWORD_INPUT = (By.ID, "input-confirm")
     AGREE_CHECKBOX = (By.NAME, "agree")
     CONTINUE_BUTTON = (By.CSS_SELECTOR, "input[type='submit'][value='Continue']")
-    RIGHT_COLUMN = (By.ID, "column-right")
     SUCCESS_MESSAGE = (By.CSS_SELECTOR, "#content p")
     SUCCESS_URL_PART = "account/success"
 

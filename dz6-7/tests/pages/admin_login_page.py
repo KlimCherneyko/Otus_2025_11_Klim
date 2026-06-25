@@ -13,7 +13,6 @@ class AdminLoginPage(BasePage):
     LOGIN_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
     FORGOTTEN_PASSWORD_LINK = (By.CSS_SELECTOR, ".help-block a")
     LOGOUT_LINK = (By.CSS_SELECTOR, "a[href*='common/logout']")
-    DASHBOARD_HEADER = (By.CSS_SELECTOR, ".page-header h1")
 
     def open(self) -> None:
         super().open("admin/")
@@ -32,3 +31,8 @@ class AdminLoginPage(BasePage):
 
     def logout(self) -> None:
         self.click(self.LOGOUT_LINK)
+
+    def wait_for_login_page(self) -> None:
+        self.wait_until(ec.url_contains("common/login"))
+        self.wait_visible(self.LOGIN_BUTTON)
+        self.wait_visible(self.PAGE_TITLE)

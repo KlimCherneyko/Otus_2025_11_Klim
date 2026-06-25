@@ -21,6 +21,7 @@ class AdminProductPage(BasePage):
     SEO_KEYWORD_INPUT = (By.ID, "input-keyword")
     PRODUCT_ROWS = (By.CSS_SELECTOR, "#form-product tbody tr")
     NO_RESULTS_CELL = (By.XPATH, "//form[@id='form-product']//td[normalize-space()='No results!']")
+    ROW_CHECKBOX = (By.CSS_SELECTOR, "input[name='selected[]']")
 
     def __init__(self, driver: WebDriver, base_url: str, user_token: str) -> None:
         super().__init__(driver, base_url)
@@ -74,7 +75,7 @@ class AdminProductPage(BasePage):
         if not self.product_exists(name):
             raise AssertionError(f"Product '{name}' is not present in the admin list")
         row = self.driver.find_element(*self._product_row_locator(name))
-        row.find_element(By.CSS_SELECTOR, "input[name='selected[]']").click()
+        row.find_element(*self.ROW_CHECKBOX).click()
         self.click(self.DELETE_BUTTON)
         self.wait_until(ec.alert_is_present())
         self.driver.switch_to.alert.accept()

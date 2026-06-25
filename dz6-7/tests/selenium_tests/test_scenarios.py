@@ -1,5 +1,6 @@
 import time
 
+import allure
 import pytest
 
 from tests.pages.admin_login_page import AdminLoginPage
@@ -13,6 +14,9 @@ def _unique_suffix() -> str:
     return str(int(time.time() * 1000))
 
 
+@allure.feature("Admin scenarios")
+@allure.story("Authentication")
+@allure.title("Admin login and logout")
 def test_admin_login_logout(driver, base_url, admin_credentials):
     page = AdminLoginPage(driver, base_url)
     page.open()
@@ -23,6 +27,9 @@ def test_admin_login_logout(driver, base_url, admin_credentials):
     assert page.wait_visible(page.LOGIN_BUTTON).is_displayed()
 
 
+@allure.feature("Admin scenarios")
+@allure.story("Product management")
+@allure.title("Admin can add a new product")
 def test_admin_add_product(driver, base_url, admin_session):
     page = AdminProductPage(driver, base_url, admin_session.get_user_token())
     suffix = _unique_suffix()
@@ -32,6 +39,9 @@ def test_admin_add_product(driver, base_url, admin_session):
     assert page.product_exists(name)
 
 
+@allure.feature("Admin scenarios")
+@allure.story("Product management")
+@allure.title("Admin can delete a product")
 def test_admin_delete_product(driver, base_url, admin_session):
     page = AdminProductPage(driver, base_url, admin_session.get_user_token())
     suffix = _unique_suffix()
@@ -42,6 +52,9 @@ def test_admin_delete_product(driver, base_url, admin_session):
     assert not page.product_exists(name)
 
 
+@allure.feature("Customer scenarios")
+@allure.story("Registration")
+@allure.title("New customer registration")
 def test_register_new_customer(driver, base_url):
     page = RegistrationPage(driver, base_url)
     page.open()
@@ -56,6 +69,9 @@ def test_register_new_customer(driver, base_url):
     assert "successfully created" in page.wait_for_success().lower()
 
 
+@allure.feature("Customer scenarios")
+@allure.story("Shopping cart")
+@allure.title("Add product to cart from main page")
 def test_add_product_to_cart_page_from_main_page(driver, base_url):
     page = MainPage(driver, base_url)
     page.open()
@@ -65,6 +81,9 @@ def test_add_product_to_cart_page_from_main_page(driver, base_url):
     assert added_product in cart_page_items
 
 
+@allure.feature("Customer scenarios")
+@allure.story("Currency")
+@allure.title("Currency switch changes prices on {page_class.__name__}")
 @pytest.mark.parametrize(
     "page_class,currency,expected_symbol",
     [

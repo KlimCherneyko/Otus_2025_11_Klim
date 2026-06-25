@@ -18,3 +18,7 @@ if ((${#ARGS[@]})); then
 else
   python3 -m pytest -c "pytest.ini" "tests/selenium_tests" --selenium-browser chrome
 fi
+
+echo ""
+echo "Allure results saved to allure-results/"
+echo "Generate report: allure serve allure-results"

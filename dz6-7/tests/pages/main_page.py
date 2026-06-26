@@ -22,10 +22,6 @@ class MainPage(BasePage):
     def _wait_for_featured_products(self) -> None:
         self.wait_until(lambda d: len(d.find_elements(*self.PRODUCT_CARDS)) > 0, timeout=20)
 
-    def get_prices_text(self) -> list[str]:
-        self._wait_for_featured_products()
-        return [price.text.strip() for price in self.driver.find_elements(*self.PRICE_VALUES) if price.text.strip()]
-
     def _cart_total_text(self) -> str:
         try:
             return self.driver.find_element(*self.CART_BUTTON).text.strip()
@@ -55,5 +51,4 @@ class MainPage(BasePage):
         super().open("index.php?route=checkout/cart")
 
     def cart_page_items(self) -> list[str]:
-        self.wait_until(lambda d: len(d.find_elements(*self.CART_PAGE_ITEMS)) > 0)
-        return [item.text.strip() for item in self.driver.find_elements(*self.CART_PAGE_ITEMS) if item.text.strip()]
+        return self.get_elements_text(self.CART_PAGE_ITEMS)

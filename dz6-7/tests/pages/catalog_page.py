@@ -12,6 +12,3 @@ class CatalogPage(BasePage):
 
     def open(self) -> None:
         super().open("index.php?route=product/category&path=20")
-
-    def get_prices_text(self) -> list[str]:
-        return [price.text.strip() for price in self.wait_all_visible(self.PRICE_VALUES) if price.text.strip()]

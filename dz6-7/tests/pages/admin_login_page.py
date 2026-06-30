@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs, urlparse
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 
@@ -11,7 +13,6 @@ class AdminLoginPage(BasePage):
     LOGIN_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
     FORGOTTEN_PASSWORD_LINK = (By.CSS_SELECTOR, ".help-block a")
     LOGOUT_LINK = (By.CSS_SELECTOR, "a[href*='common/logout']")
-    DASHBOARD_HEADER = (By.CSS_SELECTOR, ".page-header h1")
 
     def open(self) -> None:
         super().open("admin/")
@@ -24,5 +25,14 @@ class AdminLoginPage(BasePage):
     def wait_for_dashboard(self) -> None:
         self.wait_until(ec.any_of(ec.visibility_of_element_located(self.LOGOUT_LINK), ec.url_contains("dashboard")))
 
+    def get_user_token(self) -> str:
+        query = urlparse(self.driver.current_url).query
+        return parse_qs(query).get("user_token", [""])[0]
+
     def logout(self) -> None:
         self.click(self.LOGOUT_LINK)
+
+    def wait_for_login_page(self) -> None:
+        self.wait_until(ec.url_contains("common/login"))
+        self.wait_visible(self.LOGIN_BUTTON)
+        self.wait_visible(self.PAGE_TITLE)

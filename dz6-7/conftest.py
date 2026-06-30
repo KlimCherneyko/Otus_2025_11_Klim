@@ -1,7 +1,11 @@
+import os
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
+
+from tests.pages.admin_login_page import AdminLoginPage
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -77,3 +81,28 @@ def driver(request: pytest.FixtureRequest):
 
     yield web_driver
     web_driver.quit()
+
+
+@pytest.fixture()
+def admin_credentials() -> tuple[str, str]:
+    username = os.getenv("OPENCART_ADMIN_USER")
+    password = os.getenv("OPENCART_ADMIN_PASSWORD")
+    if not username or not password:
+        pytest.skip("Set OPENCART_ADMIN_USER and OPENCART_ADMIN_PASSWORD to run admin scenarios")
+    return username, password
+
+
+@pytest.fixture()
+def admin_session(driver, base_url: str, admin_credentials: tuple[str, str]) -> AdminLoginPage:
+    username, password = admin_credentials
+    login_page = AdminLoginPage(driver, base_url)
+    login_page.open()
+    login_page.login(username, password)
+    login_page.wait_for_dashboard()
+
+    yield login_page
+
+    try:
+        login_page.logout()
+    except Exception:
+        pass

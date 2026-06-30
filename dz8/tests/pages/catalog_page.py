@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 
 from tests.pages.base_page import BasePage
@@ -10,5 +11,9 @@ class CatalogPage(BasePage):
     BREADCRUMB = (By.CSS_SELECTOR, ".breadcrumb")
     PRICE_VALUES = (By.CSS_SELECTOR, ".product-thumb .price")
 
+    @allure.step("Open catalog page")
     def open(self) -> None:
         super().open("index.php?route=product/category&path=20")
+
+    def get_prices_text(self) -> list[str]:
+        return [price.text.strip() for price in self.wait_all_visible(self.PRICE_VALUES) if price.text.strip()]

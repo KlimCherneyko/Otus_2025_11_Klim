@@ -1,11 +1,22 @@
+import logging
 import os
 
+import allure
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 
 from tests.pages.admin_login_page import AdminLoginPage
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%H:%M:%S",
+        force=True,
+    )
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -28,6 +39,24 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Run Selenium browser with visible UI (disable headless mode)",
     )
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo) -> None:
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == "call" and report.failed:
+        driver = item.funcargs.get("driver")
+        if driver is not None:
+            try:
+                screenshot = driver.get_screenshot_as_png()
+                allure.attach(
+                    screenshot,
+                    name="screenshot_on_failure",
+                    attachment_type=allure.attachment_type.PNG,
+                )
+            except Exception as exc:
+                logging.getLogger(__name__).warning("Failed to capture screenshot: %s", exc)
 
 
 @pytest.fixture(scope="session")

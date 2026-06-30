@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 
 from tests.pages.base_page import BasePage
@@ -13,5 +14,6 @@ class ProductPage(BasePage):
     REVIEW_TAB = (By.CSS_SELECTOR, "a[href='#tab-review']")
     BREADCRUMB = (By.CSS_SELECTOR, ".breadcrumb")
 
+    @allure.step("Open product page")
     def open(self) -> None:
         super().open("index.php?route=product/product&product_id=43")

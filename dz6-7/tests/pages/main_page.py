@@ -25,12 +25,9 @@ class MainPage(BasePage):
         self.logger.info("Waiting for featured products")
         self.wait_until(lambda d: len(d.find_elements(*self.PRODUCT_CARDS)) > 0, timeout=20)
 
-    @allure.step("Get product prices from main page")
     def get_prices_text(self) -> list[str]:
         self._wait_for_featured_products()
-        prices = [price.text.strip() for price in self.driver.find_elements(*self.PRICE_VALUES) if price.text.strip()]
-        self.logger.info("Found %s prices on main page", len(prices))
-        return prices
+        return [price.text.strip() for price in self.driver.find_elements(*self.PRICE_VALUES) if price.text.strip()]
 
     def _cart_total_text(self) -> str:
         try:
@@ -67,6 +64,4 @@ class MainPage(BasePage):
     @allure.step("Get cart page items")
     def cart_page_items(self) -> list[str]:
         self.wait_until(lambda d: len(d.find_elements(*self.CART_PAGE_ITEMS)) > 0)
-        items = [item.text.strip() for item in self.driver.find_elements(*self.CART_PAGE_ITEMS) if item.text.strip()]
-        self.logger.info("Cart page items: %s", items)
-        return items
+        return [item.text.strip() for item in self.driver.find_elements(*self.CART_PAGE_ITEMS) if item.text.strip()]

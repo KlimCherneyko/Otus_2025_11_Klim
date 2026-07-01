@@ -10,6 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 class BasePage:
     CURRENCY_BUTTON = (By.CSS_SELECTOR, "#form-currency .dropdown-toggle")
+    PRICE_VALUES: tuple[str, str] | None = None
 
     def __init__(self, driver: WebDriver, base_url: str) -> None:
         self.driver = driver
@@ -36,7 +37,9 @@ class BasePage:
         self.click(self._currency_option_locator(currency_title))
 
     def get_prices_text(self) -> list[str]:
-        raise NotImplementedError
+        if self.PRICE_VALUES is None:
+            raise AssertionError(f"{self.__class__.__name__} does not define PRICE_VALUES locator")
+        return self.get_elements_text(self.PRICE_VALUES)
 
     @allure.step("Switch currency to {currency_title} and wait for price update")
     def switch_currency_and_get_updated_prices(self, currency_title: str) -> tuple[list[str], list[str]]:
@@ -48,7 +51,6 @@ class BasePage:
         self.logger.info("Updated prices: %s", updated_prices)
         return initial_prices, updated_prices
 
-    @allure.step("Wait for element visibility: {locator}")
     def wait_visible(self, locator: tuple[str, str], timeout: int = 10):
         self.logger.debug("Waiting for visibility: %s", locator)
         return WebDriverWait(self.driver, timeout).until(ec.visibility_of_element_located(locator))

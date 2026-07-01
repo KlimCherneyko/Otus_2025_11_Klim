@@ -64,6 +64,27 @@ def base_url(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--opencart-url")
 
 
+def _resolve_chrome_paths() -> tuple[str | None, str | None]:
+    chrome_bin = os.getenv("CHROME_BIN")
+    chromedriver_path = os.getenv("CHROMEDRIVER_PATH")
+
+    for candidate in (chrome_bin, "/usr/bin/chromium", "/usr/bin/google-chrome"):
+        if candidate and os.path.isfile(candidate):
+            chrome_bin = candidate
+            break
+    else:
+        chrome_bin = None
+
+    for candidate in (chromedriver_path, "/usr/bin/chromedriver"):
+        if candidate and os.path.isfile(candidate):
+            chromedriver_path = candidate
+            break
+    else:
+        chromedriver_path = None
+
+    return chrome_bin, chromedriver_path
+
+
 @pytest.fixture()
 def driver(request: pytest.FixtureRequest):
     browser_name = request.config.getoption("--selenium-browser")
@@ -76,17 +97,28 @@ def driver(request: pytest.FixtureRequest):
             options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        try:
-            web_driver = webdriver.Chrome(options=options)
-        except Exception as exc:
-            if "Unable to obtain driver" not in str(exc):
-                raise
-            from webdriver_manager.chrome import ChromeDriverManager
 
+        chrome_bin, chromedriver_path = _resolve_chrome_paths()
+        if chrome_bin:
+            options.binary_location = chrome_bin
+
+        if chromedriver_path:
             web_driver = webdriver.Chrome(
-                service=ChromeService(ChromeDriverManager().install()),
+                service=ChromeService(chromedriver_path),
                 options=options,
             )
+        else:
+            try:
+                web_driver = webdriver.Chrome(options=options)
+            except Exception as exc:
+                if "Unable to obtain driver" not in str(exc):
+                    raise
+                from webdriver_manager.chrome import ChromeDriverManager
+
+                web_driver = webdriver.Chrome(
+                    service=ChromeService(ChromeDriverManager().install()),
+                    options=options,
+                )
     else:
         options = webdriver.FirefoxOptions()
         options.page_load_strategy = "eager"

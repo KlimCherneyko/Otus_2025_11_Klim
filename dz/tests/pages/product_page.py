@@ -6,8 +6,8 @@ from tests.pages.base_page import BasePage
 
 class ProductPage(BasePage):
     PAGE_TITLE = (By.CSS_SELECTOR, "#content h1")
-    MAIN_IMAGE = (By.CSS_SELECTOR, ".thumbnails img")
-    PRICE_BLOCK = (By.CSS_SELECTOR, ".list-unstyled li h2")
+    MAIN_IMAGE = (By.CSS_SELECTOR, "#content .image img, #content .magnific-popup img")
+    PRICE_BLOCK = (By.CSS_SELECTOR, "#content .price-new, #content h2")
     QUANTITY_INPUT = (By.ID, "input-quantity")
     ADD_TO_CART_BUTTON = (By.ID, "button-cart")
     DESCRIPTION_TAB = (By.CSS_SELECTOR, "a[href='#tab-description']")

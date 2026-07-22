@@ -25,6 +25,8 @@ services:
       - '443:8443'
     environment:
       - OPENCART_HOST=${LOCAL_IP}:${OPENCART_PORT}
+      - OPENCART_USERNAME=${OPENCART_ADMIN_USER:-user}
+      - OPENCART_PASSWORD=${OPENCART_ADMIN_PASSWORD:-bitnami}
       - OPENCART_DATABASE_HOST=mariadb
       - OPENCART_DATABASE_PORT_NUMBER=3306
       - OPENCART_DATABASE_USER=bn_opencart
@@ -44,9 +46,12 @@ services:
     depends_on:
       opencart:
         condition: service_healthy
+    environment:
+      - OPENCART_ADMIN_USER=${OPENCART_ADMIN_USER:-user}
+      - OPENCART_ADMIN_PASSWORD=${OPENCART_ADMIN_PASSWORD:-bitnami}
     command:
       - --opencart-url
-      - http://opencart:8080
+      - http://${LOCAL_IP}:${OPENCART_PORT}
       - --browser
       - chrome
       - --browser_version

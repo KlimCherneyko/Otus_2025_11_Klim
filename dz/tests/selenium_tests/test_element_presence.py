@@ -70,7 +70,7 @@ def test_admin_login_page_elements_presence(driver, base_url):
         page.USERNAME_INPUT,
         page.PASSWORD_INPUT,
         page.LOGIN_BUTTON,
-        page.FORGOTTEN_PASSWORD_LINK,
+        page.LOGIN_FORM,
     ]:
         page.wait_visible(locator)
 

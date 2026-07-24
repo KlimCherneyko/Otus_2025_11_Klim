@@ -52,12 +52,10 @@ services:
     command:
       - --opencart-url
       - http://${LOCAL_IP}:${OPENCART_PORT}
-      - --browser
-      - chrome
-      - --browser_version
-      - "120.0"
       - --executor
       - selenoid
+      - --browsers
+      - chrome:119.0,chrome:120.0
 
 networks:
   default:

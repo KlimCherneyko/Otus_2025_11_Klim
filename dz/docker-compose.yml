@@ -1,5 +1,24 @@
 services:
 
+  selenoid:
+    image: aerokube/selenoid:latest-release
+    container_name: selenoid
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./selenoid/browsers.json:/etc/selenoid/browsers.json:ro
+    command: ["-container-network", "selenoid"]
+    ports:
+      - "4444:4444"
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui:1.10.11
+    container_name: selenoid-ui
+    depends_on:
+      - selenoid
+    ports:
+      - "8090:8080"
+    command: ["--selenoid-uri", "http://selenoid:4444"]
+
   phpadmin:
     image: 'phpmyadmin/phpmyadmin:latest'
     environment:
@@ -46,6 +65,8 @@ services:
     depends_on:
       opencart:
         condition: service_healthy
+      selenoid:
+        condition: service_started
     environment:
       - OPENCART_ADMIN_USER=${OPENCART_ADMIN_USER:-user}
       - OPENCART_ADMIN_PASSWORD=${OPENCART_ADMIN_PASSWORD:-bitnami}
@@ -62,4 +83,3 @@ services:
 networks:
   default:
     name: selenoid
-    external: true

@@ -52,6 +52,9 @@ dist/
 *.log
 pip-log.txt
 
+# Linux process scan reports
+*-scan.txt
+
 # mypy
 .mypy_cache/
 .dmypy.json

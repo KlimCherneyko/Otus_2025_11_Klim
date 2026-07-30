@@ -28,6 +28,7 @@ venv.bak/
 # Testing
 allure-results/
 allure-report/
+mobile/report.html
 .pytest_cache/
 .coverage
 .coverage.*

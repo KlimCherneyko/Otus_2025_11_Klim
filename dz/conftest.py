@@ -40,6 +40,25 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Run Selenium browser with visible UI (disable headless mode)",
     )
+    parser.addoption(
+        "--executor",
+        action="store",
+        default="local",
+        choices=["local", "selenoid"],
+        help="Where to run browser: local or selenoid",
+    )
+    parser.addoption(
+        "--browser_version",
+        action="store",
+        default="120.0",
+        help="Browser version for selenoid",
+    )
+    parser.addoption(
+        "--selenoid-url",
+        action="store",
+        default="http://selenoid:4444/wd/hub",
+        help="Selenoid hub URL",
+    )
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -90,9 +109,30 @@ def _resolve_chrome_paths() -> tuple[str | None, str | None]:
 def driver(request: pytest.FixtureRequest):
     browser_name = request.config.getoption("--selenium-browser")
     headed_mode = request.config.getoption("--selenium-headed")
+    executor = request.config.getoption("--executor")
+    browser_version = request.config.getoption("--browser_version")
+    selenoid_url = request.config.getoption("--selenoid-url")
+
     if browser_name == "chrome":
         options = webdriver.ChromeOptions()
-        options.page_load_strategy = "eager"
+    else:
+        options = webdriver.FirefoxOptions()
+
+    options.page_load_strategy = "eager"
+
+    if executor == "selenoid":
+        options.set_capability("browserName", browser_name)
+        options.set_capability("browserVersion", browser_version)
+        options.set_capability(
+            "selenoid:options",
+            {
+                "enableVNC": True,
+                "name": request.node.name,
+            },
+        )
+        web_driver = webdriver.Remote(command_executor=selenoid_url, options=options)
+        web_driver.set_window_size(1920, 1080)
+    elif browser_name == "chrome":
         options.add_argument("--window-size=1920,1080")
         if not headed_mode:
             options.add_argument("--headless=new")
@@ -121,8 +161,6 @@ def driver(request: pytest.FixtureRequest):
                     options=options,
                 )
     else:
-        options = webdriver.FirefoxOptions()
-        options.page_load_strategy = "eager"
         if not headed_mode:
             options.add_argument("--headless")
         try:

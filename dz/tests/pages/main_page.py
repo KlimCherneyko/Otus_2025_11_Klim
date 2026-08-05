@@ -11,10 +11,10 @@ class MainPage(BasePage):
     NAVBAR_MENU = (By.ID, "menu")
     PRODUCT_CARDS = (By.CSS_SELECTOR, "#content .product-thumb")
     PRICE_VALUES = (By.CSS_SELECTOR, "#content .product-thumb .price")
-    PRODUCT_NAME = (By.CSS_SELECTOR, ".caption a")
-    ADD_TO_CART_BUTTON = (By.CSS_SELECTOR, "button[onclick*='cart.add']")
-    CART_BUTTON = (By.ID, "cart-total")
-    CART_PAGE_ITEMS = (By.CSS_SELECTOR, "#content .table-responsive td.text-left a")
+    PRODUCT_NAME = (By.CSS_SELECTOR, ".description h4 a")
+    ADD_TO_CART_BUTTON = (By.CSS_SELECTOR, "button[formaction*='cart.add']")
+    CART_BUTTON = (By.CSS_SELECTOR, "#header-cart button")
+    CART_PAGE_ITEMS = (By.CSS_SELECTOR, "#content .table-responsive td.text-start a, #content .table-responsive td.text-left a")
 
     @allure.step("Open main page")
     def open(self) -> None:
@@ -48,11 +48,14 @@ class MainPage(BasePage):
         cart_total_before = self._cart_total_text()
         product_name = card.find_element(*self.PRODUCT_NAME).text.strip()
         self.logger.info("Adding product to cart: %s", product_name)
-        card.find_element(*self.ADD_TO_CART_BUTTON).click()
+        add_button = card.find_element(*self.ADD_TO_CART_BUTTON)
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", add_button)
+        self.driver.execute_script("arguments[0].click();", add_button)
 
         self.wait_until(
-            lambda d: self._cart_total_text() not in ("", cart_total_before),
-            timeout=6,
+            lambda d: self._cart_total_text() not in ("", cart_total_before)
+            and "0 item" not in self._cart_total_text().lower(),
+            timeout=15,
         )
         self.logger.info("Cart total updated to: %s", self._cart_total_text())
         return product_name

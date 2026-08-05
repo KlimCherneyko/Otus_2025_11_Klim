@@ -8,16 +8,16 @@ from tests.pages.base_page import BasePage
 
 
 class AdminLoginPage(BasePage):
-    PAGE_TITLE = (By.CSS_SELECTOR, ".panel-title")
+    PAGE_TITLE = (By.CSS_SELECTOR, ".card-header")
     USERNAME_INPUT = (By.ID, "input-username")
     PASSWORD_INPUT = (By.ID, "input-password")
     LOGIN_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
-    FORGOTTEN_PASSWORD_LINK = (By.CSS_SELECTOR, ".help-block a")
+    LOGIN_FORM = (By.ID, "form-login")
     LOGOUT_LINK = (By.CSS_SELECTOR, "a[href*='common/logout']")
 
     @allure.step("Open admin login page")
     def open(self) -> None:
-        super().open("admin/")
+        super().open("administration/")
 
     @allure.step("Login to admin panel")
     def login(self, username: str, password: str) -> None:
@@ -29,7 +29,14 @@ class AdminLoginPage(BasePage):
     @allure.step("Wait for admin dashboard")
     def wait_for_dashboard(self) -> None:
         self.logger.info("Waiting for admin dashboard")
-        self.wait_until(ec.any_of(ec.visibility_of_element_located(self.LOGOUT_LINK), ec.url_contains("dashboard")))
+        self.wait_until(
+            ec.any_of(
+                ec.visibility_of_element_located(self.LOGOUT_LINK),
+                ec.url_contains("dashboard"),
+                ec.url_contains("common/dashboard"),
+            ),
+            timeout=20,
+        )
 
     @allure.step("Get admin user token")
     def get_user_token(self) -> str:
@@ -46,6 +53,6 @@ class AdminLoginPage(BasePage):
     @allure.step("Wait for admin login page")
     def wait_for_login_page(self) -> None:
         self.logger.info("Waiting for admin login page")
-        self.wait_until(ec.url_contains("common/login"))
+        self.wait_until(ec.url_contains("common/login"), timeout=20)
         self.wait_visible(self.LOGIN_BUTTON)
         self.wait_visible(self.PAGE_TITLE)

@@ -63,10 +63,9 @@ def test_register_new_customer(driver, base_url):
         first_name="Auto",
         last_name="Tester",
         email=f"autotest_{suffix}@example.com",
-        telephone="1234567890",
         password="Password123",
     )
-    assert "successfully created" in page.wait_for_success().lower()
+    assert "created" in page.wait_for_success().lower()
 
 
 @allure.feature("Customer scenarios")

@@ -27,7 +27,7 @@ class BasePage:
     def _currency_option_locator(currency_title: str) -> tuple[str, str]:
         return (
             By.XPATH,
-            f"//form[@id='form-currency']//button[contains(normalize-space(), '{currency_title}')]",
+            f"//form[@id='form-currency']//a[contains(normalize-space(), '{currency_title}')]",
         )
 
     @allure.step("Switch currency to {currency_title}")

@@ -1,0 +1,63 @@
+services:
+
+  phpadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_USER=bn_opencart
+    ports:
+      - '${PHPADMIN_PORT}:80'
+
+  mariadb:
+    image: docker.io/bitnamilegacy/mariadb:11.2
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_opencart
+      - MARIADB_DATABASE=bitnami_opencart
+    ports:
+      - '3306:3306'
+
+  opencart:
+    image: agridyaev/opencart:4.0.2-3-debian-12-r33
+    ports:
+      - '${OPENCART_PORT}:8080'
+      - '443:8443'
+    environment:
+      - OPENCART_HOST=${LOCAL_IP}:${OPENCART_PORT}
+      - OPENCART_USERNAME=${OPENCART_ADMIN_USER:-user}
+      - OPENCART_PASSWORD=${OPENCART_ADMIN_PASSWORD:-bitnami}
+      - OPENCART_DATABASE_HOST=mariadb
+      - OPENCART_DATABASE_PORT_NUMBER=3306
+      - OPENCART_DATABASE_USER=bn_opencart
+      - OPENCART_DATABASE_NAME=bitnami_opencart
+      - ALLOW_EMPTY_PASSWORD=yes
+    depends_on:
+      - mariadb
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${OPENCART_PORT}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  tests:
+    build: .
+    image: opencart-tests
+    depends_on:
+      opencart:
+        condition: service_healthy
+    environment:
+      - OPENCART_ADMIN_USER=${OPENCART_ADMIN_USER:-user}
+      - OPENCART_ADMIN_PASSWORD=${OPENCART_ADMIN_PASSWORD:-bitnami}
+    command:
+      - --opencart-url
+      - http://${LOCAL_IP}:${OPENCART_PORT}
+      - --executor
+      - selenoid
+      - --browsers
+      - chrome:119.0,chrome:120.0
+
+networks:
+  default:
+    name: selenoid
+    external: true

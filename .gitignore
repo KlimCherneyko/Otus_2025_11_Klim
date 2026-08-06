@@ -51,6 +51,7 @@ dist/
 # Logs
 *.log
 pip-log.txt
+log/access.tar.gz
 
 # Linux process scan reports
 *-scan.txt

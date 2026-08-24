@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+    options {
+        timestamps()
+    }
+    environment {
+        CHROME_BIN = "/usr/bin/chromium"
+        CHROMEDRIVER_PATH = "/usr/bin/chromedriver"
+    }
+    stages {
+        stage("Prepare") {
+            steps {
+                script {
+                    if (fileExists("/coursework/pytest.ini")) {
+                        env.PROJECT_DIR = "/coursework"
+                    } else if (fileExists("coursework/pytest.ini")) {
+                        env.PROJECT_DIR = "${env.WORKSPACE}/coursework"
+                    } else {
+                        env.PROJECT_DIR = env.WORKSPACE
+                    }
+                    echo "PROJECT_DIR=${env.PROJECT_DIR}"
+                }
+            }
+        }
+        stage("Install dependencies") {
+            steps {
+                sh '''
+                    python3 -m venv /tmp/coursework-venv
+                    /tmp/coursework-venv/bin/pip install --upgrade pip
+                    /tmp/coursework-venv/bin/pip install -r "${PROJECT_DIR}/requirements.txt"
+                '''
+            }
+        }
+        stage("Run tests") {
+            steps {
+                sh '''
+                    cd "${PROJECT_DIR}"
+                    /tmp/coursework-venv/bin/pytest --clean-alluredir --alluredir=allure-results
+                '''
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                sh '''
+                    mkdir -p allure-results allure-report
+                    cp -R "${PROJECT_DIR}/allure-results/." allure-results/ || true
+                    /usr/local/bin/allure generate allure-results -o allure-report --clean || true
+                '''
+            }
+            catchError(buildResult: "UNSTABLE", stageResult: "UNSTABLE") {
+                allure([
+                    commandline: "Allure",
+                    includeProperties: false,
+                    jdk: "",
+                    results: [[path: "allure-results"]]
+                ])
+            }
+            archiveArtifacts artifacts: "allure-report/**", allowEmptyArchive: true
+        }
+    }
+}

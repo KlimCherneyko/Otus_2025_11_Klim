@@ -1,0 +1,49 @@
+Отчёт о состоянии системы:
+Пользователи системы: '_accessoryupdater', '_analyticsd', '_appinstalld', '_appleevents', '_applepay', '_assetcache', '_audiomxd', '_biome', '_cmiodalassistants', '_coreaudiod', '_corespeechd', '_ctkd', '_diskimagesiod', '_distnote', '_driverkit', '_fpsd', '_gamecontrollerd', '_iconservices', '_installcoordinationd', '_locationd', '_mdnsresponder', '_mds_stores', '_modelmanagerd', '_nearbyd', '_netbios', '_networkd', '_neuralengine', '_nsurlsessiond', '_oahd', '_rmd', '_securityagent', '_softwareupdate', '_spotlight', '_timed', '_trustd', '_usbmuxd', '_windowserver', 'klimmilk', 'root'
+Процессов запущено: 526
+
+Пользовательских процессов:
+klimmilk: 339
+root: 122
+_cmiodalassistants: 9
+_locationd: 7
+_driverkit: 4
+_modelmanagerd: 3
+_coreaudiod: 3
+_windowserver: 2
+_fpsd: 2
+_softwareupdate: 2
+_diskimagesiod: 2
+_appleevents: 2
+_nsurlsessiond: 2
+_audiomxd: 2
+_mdnsresponder: 1
+_networkd: 1
+_analyticsd: 1
+_iconservices: 1
+_biome: 1
+_netbios: 1
+_trustd: 1
+_appinstalld: 1
+_neuralengine: 1
+_rmd: 1
+_installcoordinationd: 1
+_securityagent: 1
+_applepay: 1
+_accessoryupdater: 1
+_gamecontrollerd: 1
+_oahd: 1
+_nearbyd: 1
+_ctkd: 1
+_spotlight: 1
+_mds_stores: 1
+_distnote: 1
+_timed: 1
+_usbmuxd: 1
+_corespeechd: 1
+_assetcache: 1
+
+Всего памяти используется: 67.7%
+Всего CPU используется: 159.4%
+Больше всего памяти использует: /Users/klimmilk/Libr
+Больше всего CPU использует: /Applications/Cursor

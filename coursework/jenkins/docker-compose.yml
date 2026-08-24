@@ -1,0 +1,18 @@
+services:
+  jenkins:
+    build: .
+    container_name: coursework-jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ..:/coursework
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+      CHROME_BIN: /usr/bin/chromium
+      CHROMEDRIVER_PATH: /usr/bin/chromedriver
+    shm_size: "2gb"
+
+volumes:
+  jenkins_home:

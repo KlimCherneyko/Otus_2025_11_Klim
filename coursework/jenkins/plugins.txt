@@ -1,0 +1,6 @@
+workflow-aggregator
+git
+allure-jenkins-plugin
+timestamper
+ws-cleanup
+credentials-binding
